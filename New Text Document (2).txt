@@ -1,0 +1,70 @@
+#1 config e proje
+#darbare drf chist o ina sohbat mishe
+#yek proje django run mikonim o rest ro set mikonim dar porje
+
+------------------------------------------------------------------------
+
+#2serializer chist
+#serializer be mani e tabdile data e az database be json ya bar axesh baraye ertebat ba baghie system ha
+#avalash ipython ro install mikonim va vaghti ke shell ro run konim khodesh auto az ioython estefade mikone dar in mohit
+#badesh ham yek mesale koochik darbare serializer ha mide ke serializer ha be soorate koli 3 ta hastand==>
+1.serializer
+2.modelSerializer
+3.hyperlinkedserializer
+
+1--------------  serializers.serializer
+ 
+#in model serializer mese set kardane field haye model ha dar django hast==>
+
+class CommentSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    content = serializers.CharField(max_length=200)
+    created = serializers.DateTimeField()
+
+--object model
+class Comment(object):
+    def __int__(self, email, content, created):
+        self.email = email
+        self.content = content
+        self.created = created or datetime.now()
+
+--create object
+comment=Comment(email='test@test.com',content='test')
+serializer_data=CommentSerializer(comment)
+serializer_data.comment ro ke bezani data ro be soorate json mibini
+
+2----------- serializers.ModelSerializer
+#model serializer mesle hamoon modelform hast ke be komake class e meta mitoonim model ro mostaghim be serializer vasl konim va vase vaghti ke nemikhaym kheyli customize konim field haye serializer ro in ravesh soratemoon ro bishtar mikone ==>
+
+--model
+class UserProfile(models.Model):
+    name = models.CharField(max_length=150)
+    age = models.PositiveIntegerField(max_length=150)
+    bio = models.TextField()
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+--serializer
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+---views ***
+#baraye shorou ke data e json doros konim ya daryaft konim az user,az function ha estefade mikonim ke be komake decorator mitoonim baraye drf o rest estefade konimeshoon==>
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+-
+@api_view(['GET', 'POST'])
+def user_profile(request):
+    profiles = UserProfile.objects.all()
+    serializer_data = UserProfileSerializer(profiles, many=True)
+    return Response(serializer_data.data)
+--
+#tamrin akhare jalase ine ke class comment ee ke ebtedaye jalase barresi kardim ro dar file haye serializer o model estefade konim
+
+------------------------------------------------------------------------
+
+#3
