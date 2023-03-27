@@ -67,4 +67,52 @@ def user_profile(request):
 
 ------------------------------------------------------------------------
 
-#3
+#3 more about methods function
+#darbare method haye function api ha bishtar tozih dade mishe ke ma khoob nist baraye har method e yek endpoint o url chand function benevisim(vase get yeki vase post yeki) albate mishe inkaro kard va ba viewset ha tarkib kard.
+#hamchenin behtare ke age kare mohemi dare in api_view behtare ke vase har method esh yek serializer e joda neveshte beshe ta secure bemoone va hame data haye oon endpoint o modelesh neshoon dade nashe==>
+
+class CreateUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('name', 'bio', 'email', 'age')
+
+--view
+
+@api_view(['GET', 'POST'])
+def user_profile(request):
+    if request.method == 'GET':
+        profiles = UserProfile.objects.all()
+        serializer_data = UserProfileSerializer(profiles, many=True)
+        return Response(serializer_data.data)
+    if request.method == 'POST':
+        req_data = request.data
+        serializer = CreateUserProfileSerializer(data=req_data)
+        # we don't want to fill instance and return ir like get method,we want to fill data with this serializer
+
+        if serializer.is_valid():  # return boolean
+            serializer.save()
+            return Response(serializer.data,status=201)
+        else:
+            return Response(serializer.errors, status=400)  # return dictionary of errors
+
+---nokte
+ghesmate if o else ro khode serializer handle mikone va niaz nist ke ma shart bezarim age valid bood save kon age na response ina return kone khodesh mitoone by default inkaro bokone magar inke bekhaym test konim yek seri time ha oon moghe shart mizarim ta befahmim moshkel chie==>
+
+@api_view(['GET', 'POST'])
+def user_profile(request):
+    ...
+
+    if request.method == 'POST':
+        req_data = request.data
+        serializer = CreateUserProfileSerializer(data=req_data)
+        # we don't want to fill instance and return ir like get method,we want to fill data with this serializer
+
+        serializer.is_valid(raise_exception=True)  # raise_exception means that if errors exists return them!!
+        serializer.save()
+        return Response(serializer.data, status=201)
+
+#dar kol function base view ha baraye karhaye saade hast va age niaz be class nist bayad az ina estefade kard ke kheyli kam pish miad ba function api_view benevisim
+
+------------------------------------------------------------------------
+
+#4
