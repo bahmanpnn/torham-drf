@@ -115,4 +115,95 @@ def user_profile(request):
 
 ------------------------------------------------------------------------
 
-#4
+#4 more about method in functions(update and delete) /class based views
+#mehtod haye update o delete ham set mikonim in jalase va kheyli maloome niaz be tozih nis==>
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def update_delete_user_profile(request, pk):
+    if request.method == 'GET':
+        profile = UserProfile.objects.get(pk=pk)
+        if profile is not None:
+            serializer_data = UserProfileSerializer(profile)
+            return Response(serializer_data.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'PUT':
+        user_profile_pk = UserProfile.objects.get(pk=pk)
+        if user_profile_pk is not None:
+            serializer = UserProfileSerializer(
+                instance=user_profile_pk,
+                data=request.data
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        user_profile_pk = UserProfile.objects.get(pk=pk)
+        user_profile_pk.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+----nokte ***
+#faghat yek moshkeli ke hast ine ke masalan 7ta user vojood dare vali age url e bade oon ham request bezani miare vasat.vase hamin get ro ham add kardam be in endpoint va age nadashte bashe method e get ro miare gui e drf va in bade.vase hamin ya bayad shart bezari age pk vojood nadasht yekari bokone masalan 404 raise konim ya response error return konim!!
+
+------------CBVs 
+#class base view ha saade tarin esh ke customizing e ziadi dare mesle hamoon cbv haye khode django hast ke bejaye ersbari az View az APIView estefade mikonim==>
+
+class UserProfileView(APIView):
+    def get(self, request):
+        profiles = UserProfile.objects.all()
+
+        serializer_data = UserProfileSerializer(profiles, many=True)
+        return Response(serializer_data.data)
+
+    def post(self, request):
+        serializer = CreateUserProfileSerializer(data=request.data)
+        # we don't want to fill instance and return ir like get method,we want to fill data with this serializer
+        serializer.is_valid(raise_exception=True)  # raise_exception means that if errors exists return them!!
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, pk):
+        user_profile_pk = UserProfile.objects.get(pk=pk)
+        if user_profile_pk is not None:
+            serializer = UserProfileSerializer(
+                instance=user_profile_pk,
+                data=request.data
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk):
+        user_profile_pk = UserProfile.objects.get(pk=pk)
+        user_profile_pk.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+--nokte **
+#dar function ha chon joda boodan method ha url ha ok bood vali dar cbv ha age APIView estefade mikonim bayad url haro joda konim va chandta url ke lazem darim(bastegi be voroodi haye method hamoon ham dare) bayad oon class ro set konim ke dar inja 2ta url set mishe.yeki baraye get o post ke id o pk lazem nadare dovomin url ham vase update o delete hast ke pk migire va profile ro get mikone az database
+
+--urls
+    path('users/', UserProfileView.as_view(), name='user-profile-class-base-view-get-post'),
+    path('users/<int:pk>/', UserProfileView.as_view(), name='user-profile-class-base-view-update-and-delete'),
+
+---nokte 2
+#age http://127.0.0.1:8000/users/5/ ro vared konim ba inke dar database id e 5 vojood dare error migirim dar browser vali age dar postman ya rest client haye dg test konim put va delete ro anjam mishe va error nemikhore!!!
+
+---------------------------------------------------------------------------------------------
+
+#5
+
+
+
+
+
+
+
+
+
+
+
+
+
