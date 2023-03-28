@@ -193,8 +193,33 @@ class UserProfileView(APIView):
 
 ---------------------------------------------------------------------------------------------
 
-#5
+#5 generic views
+#generic ha yek seri class haye khaas hastand ke vase ma yek seri karhaye khas anjam midan
+#dar jalase ghabl yek APIView neveshtim ke kolli code bayad mizadim ta yek method ro set konim hala dar rstframework class ee vojood dare be esme ListAPIView ke kare maro sade tar mikone dar method e get ke list oon query va modeli ee ke mikhaym ro neshoon mide==>
 
+class ListUserProfileView(ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    # permission_classes = ...
+    # pagination_class = ...
+
+
+class CreateUserProfileView(CreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = CreateUserProfileSerializer
+    # permission_classes = ...
+    # pagination_class = ...
+
+
+class ListCreateUserProfileView(ListCreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = CreateUserProfileSerializer
+    # permission_classes = (IsAuthenticated,)
+    # pagination_class = ...
+
+---------------------------------------------------------------------------------------------
+
+#6
 
 
 

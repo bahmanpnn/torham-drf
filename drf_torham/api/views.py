@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView, CreateAPIView,ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -64,7 +65,6 @@ def comments(request):
 class UserProfileView(APIView):
     def get(self, request):
         profiles = UserProfile.objects.all()
-
         serializer_data = UserProfileSerializer(profiles, many=True)
         return Response(serializer_data.data)
 
@@ -92,3 +92,24 @@ class UserProfileView(APIView):
         user_profile_pk = UserProfile.objects.get(pk=pk)
         user_profile_pk.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ListUserProfileView(ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    # permission_classes = ...
+    # pagination_class = ...
+
+
+class CreateUserProfileView(CreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = CreateUserProfileSerializer
+    # permission_classes = ...
+    # pagination_class = ...
+
+
+class ListCreateUserProfileView(ListCreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = CreateUserProfileSerializer
+    # permission_classes = ...
+    # pagination_class = ...
